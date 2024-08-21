@@ -59,7 +59,7 @@ impl BriansBrain {
     }
 }
 
-impl Automata for BriansBrain {
+impl Automata<(u32, u32)> for BriansBrain {
     fn update(&mut self) {
         let mut grid_next = self.grid.clone();
 
@@ -79,27 +79,26 @@ impl Automata for BriansBrain {
         self.grid = grid_next;
     }
 
-    fn before_render(&self) {}
+    fn before_render(&self) -> (u32, u32) {
+        (GRID_WIDTH * PIXEL_SCALE, GRID_HEIGHT * PIXEL_SCALE)
+    }
 
-    fn render(&self, pixels: &mut [u8]) {
-        let viewport_width = GRID_WIDTH * PIXEL_SCALE;
-        let viewport_height = GRID_HEIGHT * PIXEL_SCALE;
+    fn render(&self, context: &(u32, u32), i: usize, pixel: &mut [u8]) {
+        let (viewport_width, viewport_height) = context;
 
-        for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
-            let (vx, vy) = viewport_index_to_coords(i, viewport_width, viewport_height);
-            let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
+        let (vx, vy) = viewport_index_to_coords(i, *viewport_width, *viewport_height);
+        let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
 
-            let index = grid_coords_to_index(x, y, GRID_WIDTH);
+        let index = grid_coords_to_index(x, y, GRID_WIDTH);
 
-            let color = match self.grid[index] {
-                2 => [0x0, 0x99, 0x77, 0xff],
-                1 => [0x0, 0xdd, 0xdd, 0xff],
-                0 => [0x0, 0x22, 0x44, 0xff],
-                _ => unreachable!(),
-            };
+        let color = match self.grid[index] {
+            2 => [0x0, 0x99, 0x77, 0xff],
+            1 => [0x0, 0xdd, 0xdd, 0xff],
+            0 => [0x0, 0x22, 0x44, 0xff],
+            _ => unreachable!(),
+        };
 
-            pixel.copy_from_slice(&color);
-        }
+        pixel.copy_from_slice(&color);
     }
 
     fn grid_width(&self) -> u32 {

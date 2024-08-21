@@ -9,7 +9,7 @@ use winit_input_helper::WinitInputHelper;
 
 use crate::automata::Automata;
 
-pub fn run_sim(mut sim: Box<dyn Automata + 'static>) -> Result<(), Error> {
+pub fn run_sim<T: 'static>(mut sim: Box<dyn Automata<T> + 'static>) -> Result<(), Error> {
     let grid_width = sim.grid_width();
     let grid_height = sim.grid_height();
 
@@ -62,8 +62,12 @@ pub fn run_sim(mut sim: Box<dyn Automata + 'static>) -> Result<(), Error> {
         match event {
             Event::RedrawRequested(_) => {
                 let frame = pixels.frame_mut();
-                sim.before_render();
-                sim.render(frame);
+                let context = sim.before_render();
+
+                for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
+                    sim.render(&context, i, pixel);
+                }
+
                 pixels.render().unwrap();
             }
             Event::MainEventsCleared => {

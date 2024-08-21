@@ -75,7 +75,7 @@ impl RockPaperScissors {
     }
 }
 
-impl Automata for RockPaperScissors {
+impl Automata<()> for RockPaperScissors {
     fn update(&mut self) {
         let mut grid_next = self.grid.clone();
 
@@ -101,23 +101,21 @@ impl Automata for RockPaperScissors {
 
     fn before_render(&self) {}
 
-    fn render(&self, pixels: &mut [u8]) {
-        for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
-            let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-            let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
+    fn render(&self, _context: &(), i: usize, pixel: &mut [u8]) {
+        let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
 
-            let index = grid_coords_to_index(x, y, GRID_WIDTH);
+        let index = grid_coords_to_index(x, y, GRID_WIDTH);
 
-            // Hard-coding to support only 3 colors for now.
-            let color = match self.grid[index] {
-                0 => [0xff, 0x0, 0x0, 0xff],
-                1 => [0x0, 0xff, 0x0, 0xff],
-                2 => [0x0, 0x0, 0xff, 0xff],
-                _ => unreachable!(),
-            };
+        // Hard-coding to support only 3 colors for now.
+        let color = match self.grid[index] {
+            0 => [0xff, 0x0, 0x0, 0xff],
+            1 => [0x0, 0xff, 0x0, 0xff],
+            2 => [0x0, 0x0, 0xff, 0xff],
+            _ => unreachable!(),
+        };
 
-            pixel.copy_from_slice(&color);
-        }
+        pixel.copy_from_slice(&color);
     }
 
     fn grid_width(&self) -> u32 {

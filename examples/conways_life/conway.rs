@@ -62,7 +62,7 @@ impl Conway {
     }
 }
 
-impl Automata for Conway {
+impl Automata<()> for Conway {
     fn update(&mut self) {
         let mut grid_next = self.grid.clone();
 
@@ -85,21 +85,19 @@ impl Automata for Conway {
 
     fn before_render(&self) {}
 
-    fn render(&self, pixels: &mut [u8]) {
-        for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
-            let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-            let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
+    fn render(&self, _context: &(), i: usize, pixel: &mut [u8]) {
+        let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
 
-            let index = grid_coords_to_index(x, y, GRID_WIDTH);
+        let index = grid_coords_to_index(x, y, GRID_WIDTH);
 
-            let color = if self.grid[index] {
-                [0x0, 0x99, 0x11, 0xff]
-            } else {
-                [0x0, 0x22, 0x11, 0xff]
-            };
+        let color = if self.grid[index] {
+            [0x0, 0x99, 0x11, 0xff]
+        } else {
+            [0x0, 0x22, 0x11, 0xff]
+        };
 
-            pixel.copy_from_slice(&color);
-        }
+        pixel.copy_from_slice(&color);
     }
 
     fn grid_width(&self) -> u32 {
