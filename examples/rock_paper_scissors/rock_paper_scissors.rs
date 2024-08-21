@@ -99,6 +99,8 @@ impl Automata for RockPaperScissors {
         self.grid = grid_next;
     }
 
+    fn before_render(&self) {}
+
     fn render(&self, pixels: &mut [u8]) {
         for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
             let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);

@@ -79,6 +79,8 @@ impl Automata for BriansBrain {
         self.grid = grid_next;
     }
 
+    fn before_render(&self) {}
+
     fn render(&self, pixels: &mut [u8]) {
         let viewport_width = GRID_WIDTH * PIXEL_SCALE;
         let viewport_height = GRID_HEIGHT * PIXEL_SCALE;

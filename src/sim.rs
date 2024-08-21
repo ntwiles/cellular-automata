@@ -62,9 +62,8 @@ pub fn run_sim(mut sim: Box<dyn Automata + 'static>) -> Result<(), Error> {
         match event {
             Event::RedrawRequested(_) => {
                 let frame = pixels.frame_mut();
-
+                sim.before_render();
                 sim.render(frame);
-
                 pixels.render().unwrap();
             }
             Event::MainEventsCleared => {
@@ -73,7 +72,6 @@ pub fn run_sim(mut sim: Box<dyn Automata + 'static>) -> Result<(), Error> {
                 }
 
                 sim.update();
-
                 window.request_redraw()
             }
             Event::WindowEvent {
