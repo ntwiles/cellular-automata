@@ -45,7 +45,7 @@ pub fn run_sim<T: 'static>(
 
     env_logger::init();
 
-    let mut sim_running = false;
+    let mut sim_running = true;
     let mut sim_rendering = true;
 
     event_loop.run(move |event, _, control_flow| {

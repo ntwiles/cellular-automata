@@ -17,4 +17,7 @@ Pass the name of the algorithm you want to visualize as the first command line a
 - Brian's Brain: `cargo run --example brians_brain`
 - Rock Paper Scissors: `cargo run --example rock_paper_scissors`
 
-Each simulation will begin paused. To begin the simulation (or to pause later) press the space key.
+## Runtime Controls
+
+- Space: enable/disable simulation.
+- R: enable/disable rendering.
