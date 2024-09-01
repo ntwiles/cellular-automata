@@ -72,6 +72,10 @@ pub fn run_sim<T: 'static>(
 
         match event {
             Event::RedrawRequested(_) => {
+                if !sim_rendering {
+                    return;
+                }
+
                 let frame = pixels.frame_mut();
 
                 let start_time = Instant::now();
@@ -97,7 +101,7 @@ pub fn run_sim<T: 'static>(
                 pixels.render().unwrap();
             }
             Event::MainEventsCleared => {
-                if !sim_running || !sim_rendering {
+                if !sim_running {
                     return;
                 }
 
