@@ -1,4 +1,5 @@
 use pixels::{Error, Pixels, SurfaceTexture};
+use std::time::Instant;
 use winit::{
     dpi::LogicalSize,
     event::{Event, VirtualKeyCode},
@@ -66,15 +67,18 @@ pub fn run_sim<T: 'static>(
 
         match event {
             Event::RedrawRequested(_) => {
-                if config.debug {
-                    println!("Redraw requested");
-                }
-
                 let frame = pixels.frame_mut();
                 let context = sim.before_render();
 
+                let start_time = Instant::now();
+
                 for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
                     sim.render(&context, i, pixel);
+                }
+
+                let elapsed = start_time.elapsed();
+                if config.debug {
+                    println!("Simulation render time: {:?}", elapsed);
                 }
 
                 pixels.render().unwrap();
@@ -84,7 +88,15 @@ pub fn run_sim<T: 'static>(
                     return;
                 }
 
+                let start_time = Instant::now();
+
                 sim.update();
+
+                let elapsed = start_time.elapsed();
+                if config.debug {
+                    println!("Simulation update time: {:?}", elapsed);
+                }
+
                 window.request_redraw()
             }
             Event::WindowEvent {
