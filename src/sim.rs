@@ -46,6 +46,7 @@ pub fn run_sim<T: 'static>(
     env_logger::init();
 
     let mut sim_running = false;
+    let mut sim_rendering = true;
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = if sim_running {
@@ -62,6 +63,10 @@ pub fn run_sim<T: 'static>(
 
             if input.key_pressed(VirtualKeyCode::Space) {
                 sim_running = !sim_running;
+            }
+
+            if input.key_pressed(VirtualKeyCode::R) {
+                sim_rendering = !sim_rendering;
             }
         }
 
@@ -92,7 +97,7 @@ pub fn run_sim<T: 'static>(
                 pixels.render().unwrap();
             }
             Event::MainEventsCleared => {
-                if !sim_running {
+                if !sim_running || !sim_rendering {
                     return;
                 }
 
