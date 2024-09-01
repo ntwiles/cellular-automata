@@ -68,7 +68,15 @@ pub fn run_sim<T: 'static>(
         match event {
             Event::RedrawRequested(_) => {
                 let frame = pixels.frame_mut();
+
+                let start_time = Instant::now();
+
                 let context = sim.before_render();
+
+                let elapsed = start_time.elapsed();
+                if config.debug {
+                    println!("Simulation before_render time: {:?}", elapsed);
+                }
 
                 let start_time = Instant::now();
 
