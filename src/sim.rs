@@ -7,9 +7,14 @@ use winit::{
 };
 use winit_input_helper::WinitInputHelper;
 
-use crate::automata::Automata;
+use crate::{automata::Automata, sim_config::SimConfig};
 
-pub fn run_sim<T: 'static>(mut sim: Box<dyn Automata<T> + 'static>) -> Result<(), Error> {
+pub fn run_sim<T: 'static>(
+    mut sim: Box<dyn Automata<T> + 'static>,
+    config: Option<SimConfig>,
+) -> Result<(), Error> {
+    let config = config.unwrap_or_default();
+
     let grid_width = sim.grid_width();
     let grid_height = sim.grid_height();
 
@@ -61,6 +66,10 @@ pub fn run_sim<T: 'static>(mut sim: Box<dyn Automata<T> + 'static>) -> Result<()
 
         match event {
             Event::RedrawRequested(_) => {
+                if config.debug {
+                    println!("Redraw requested");
+                }
+
                 let frame = pixels.frame_mut();
                 let context = sim.before_render();
 

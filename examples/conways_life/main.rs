@@ -5,5 +5,5 @@ use pixels::Error;
 
 fn main() -> Result<(), Error> {
     let sim = Box::new(conway::Conway::new());
-    run_sim(sim)
+    run_sim(sim, None)
 }

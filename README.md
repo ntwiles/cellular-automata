@@ -18,8 +18,3 @@ Pass the name of the algorithm you want to visualize as the first command line a
 - Rock Paper Scissors: `cargo run --example rock_paper_scissors`
 
 Each simulation will begin paused. To begin the simulation (or to pause later) press the space key.
-
-## Configuration
-
-Configuration can overridden per-algorithm by creating a `settings.toml` file. See
-`default.toml` for details on the available fields.
