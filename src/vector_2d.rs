@@ -1,8 +1,10 @@
 use num_traits::Float;
+use serde::Deserialize;
 use std::hash::{Hash, Hasher};
 use std::ops::{Add, Div, Mul, Sub};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+// TODO: Put Deserialize behind a feature flag.
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 pub struct Vector2D<T> {
     pub x: T,
     pub y: T,
