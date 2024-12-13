@@ -1,7 +1,7 @@
 use cellular_automata::{
     automata::Automata,
     grid::grid_coords_to_index,
-    vector_2d::Vector2D,
+    vectors::vector_2d_int::Vector2DInt,
     viewport::{viewport_index_to_coords, viewport_to_grid},
 };
 
@@ -14,13 +14,13 @@ const VIEWPORT_HEIGHT: u32 = GRID_HEIGHT * PIXEL_SCALE;
 
 pub struct LangtonsAnt {
     grid: Vec<bool>,
-    ant_pos: Vector2D<u32>,
+    ant_pos: Vector2DInt<u32>,
     ant_dir: u8,
 }
 
 impl LangtonsAnt {
     pub fn new() -> Self {
-        let ant_pos = Vector2D {
+        let ant_pos = Vector2DInt {
             x: GRID_WIDTH / 2,
             y: GRID_HEIGHT / 2,
         };

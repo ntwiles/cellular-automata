@@ -5,27 +5,17 @@ use std::ops::{Add, Div, Mul, Sub};
 
 // TODO: Put Deserialize behind a feature flag.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
-pub struct Vector2D<T> {
+pub struct Vector2D<T: Float> {
     pub x: T,
     pub y: T,
 }
 
-impl<T: PartialEq> Eq for Vector2D<T> {}
+impl<T: PartialEq + Float> Eq for Vector2D<T> {}
 
-impl<T: Hash> Hash for Vector2D<T> {
+impl<T: Hash + Float> Hash for Vector2D<T> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.x.hash(state);
         self.y.hash(state);
-    }
-}
-
-// TODO: See about generalizing this.
-impl Vector2D<u32> {
-    pub fn to_i32(self) -> Vector2D<i32> {
-        Vector2D {
-            x: self.x as i32,
-            y: self.y as i32,
-        }
     }
 }
 
@@ -55,30 +45,24 @@ where
     }
 }
 
-impl<T> Add for Vector2D<T>
-where
-    T: Into<i32>,
-{
-    type Output = Vector2D<i32>;
+impl<T: Float> Add for Vector2D<T> {
+    type Output = Self;
 
-    fn add(self, other: Vector2D<T>) -> Vector2D<i32> {
-        Vector2D {
-            x: self.x.into() + other.x.into(),
-            y: self.y.into() + other.y.into(),
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
         }
     }
 }
 
-impl<T> Sub for Vector2D<T>
-where
-    T: Into<i32>,
-{
-    type Output = Vector2D<i32>;
+impl<T: Float> Sub for Vector2D<T> {
+    type Output = Self;
 
-    fn sub(self, other: Vector2D<T>) -> Vector2D<i32> {
-        Vector2D {
-            x: self.x.into() - other.x.into(),
-            y: self.y.into() - other.y.into(),
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
         }
     }
 }

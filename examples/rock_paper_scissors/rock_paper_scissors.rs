@@ -3,7 +3,7 @@ use rand::{thread_rng, Rng};
 use cellular_automata::{
     automata::Automata,
     grid::{grid_coords_to_index, grid_index_to_coords},
-    vector_2d::Vector2D,
+    vectors::vector_2d_int::Vector2DInt,
     viewport::{viewport_index_to_coords, viewport_to_grid},
 };
 pub struct RockPaperScissors {
@@ -35,8 +35,8 @@ impl RockPaperScissors {
     fn is_beaten_by_neighbor(
         &self,
         grid: &[usize],
-        pos: Vector2D<u32>,
-        offset: Vector2D<i32>,
+        pos: Vector2DInt<u32>,
+        offset: Vector2DInt<i32>,
     ) -> usize {
         let neighbor = pos.to_i32() + offset;
 
@@ -44,7 +44,7 @@ impl RockPaperScissors {
             return 0;
         }
 
-        let neighbor = Vector2D {
+        let neighbor = Vector2DInt {
             x: neighbor.x as u32,
             y: neighbor.y as u32,
         };
@@ -68,15 +68,15 @@ impl RockPaperScissors {
     // TODO: This is very similar to the analagous function in Conway. Refactor.
     // We can create functions get_moore_neighbors() and get_von_neumann_neighbors()
     // instead of this.
-    pub fn is_beaten(&self, grid: &[usize], pos: Vector2D<u32>) -> bool {
-        let defeats = self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 0, y: -1 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 0, y: 1 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: 0 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: 0 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: -1 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: -1 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: 1 })
-            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: 1 });
+    pub fn is_beaten(&self, grid: &[usize], pos: Vector2DInt<u32>) -> bool {
+        let defeats = self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: 0, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: 0, y: 1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: -1, y: 0 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: 1, y: 0 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: -1, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: 1, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: -1, y: 1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2DInt { x: 1, y: 1 });
 
         defeats > 2
     }
