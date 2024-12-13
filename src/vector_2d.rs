@@ -17,6 +17,16 @@ impl<T: Hash> Hash for Vector2D<T> {
     }
 }
 
+// TODO: See about generalizing this.
+impl Vector2D<u32> {
+    pub fn to_i32(self) -> Vector2D<i32> {
+        Vector2D {
+            x: self.x as i32,
+            y: self.y as i32,
+        }
+    }
+}
+
 impl<T> Vector2D<T>
 where
     T: Copy + Add<Output = T> + Mul<Output = T> + Div<Output = T> + PartialOrd + Float,
@@ -39,6 +49,20 @@ where
         Vector2D {
             x: self.x / magnitude,
             y: self.y / magnitude,
+        }
+    }
+}
+
+impl<T> Add for Vector2D<T>
+where
+    T: Into<i32>,
+{
+    type Output = Vector2D<i32>;
+
+    fn add(self, other: Vector2D<T>) -> Vector2D<i32> {
+        Vector2D {
+            x: self.x.into() + other.x.into(),
+            y: self.y.into() + other.y.into(),
         }
     }
 }

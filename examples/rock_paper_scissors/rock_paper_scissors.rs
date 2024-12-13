@@ -3,6 +3,7 @@ use rand::{thread_rng, Rng};
 use cellular_automata::{
     automata::Automata,
     grid::{grid_coords_to_index, grid_index_to_coords},
+    vector_2d::Vector2D,
     viewport::{viewport_index_to_coords, viewport_to_grid},
 };
 pub struct RockPaperScissors {
@@ -31,23 +32,29 @@ impl RockPaperScissors {
         Self { grid }
     }
 
-    fn is_beaten_by_neighbor(&self, grid: &[usize], x: u32, y: u32, ox: i32, oy: i32) -> usize {
-        let nx = x as i32 + ox;
-        let ny = y as i32 + oy;
+    fn is_beaten_by_neighbor(
+        &self,
+        grid: &[usize],
+        pos: Vector2D<u32>,
+        offset: Vector2D<i32>,
+    ) -> usize {
+        let neighbor = pos.to_i32() + offset;
 
-        if nx < 0 || ny < 0 {
+        if neighbor.x < 0 || neighbor.y < 0 {
             return 0;
         }
 
-        let nx = nx as u32;
-        let ny = ny as u32;
+        let neighbor = Vector2D {
+            x: neighbor.x as u32,
+            y: neighbor.y as u32,
+        };
 
-        if nx >= GRID_WIDTH || ny >= GRID_HEIGHT {
+        if neighbor.x >= GRID_WIDTH || neighbor.y >= GRID_HEIGHT {
             return 0;
         }
 
-        let cell = grid_coords_to_index(x, y, GRID_WIDTH);
-        let neighbor = grid_coords_to_index(nx, ny, GRID_WIDTH);
+        let cell = grid_coords_to_index(pos, GRID_WIDTH);
+        let neighbor = grid_coords_to_index(neighbor, GRID_WIDTH);
 
         // 0 = rock, 1 = paper, 2 = scissors
         match (grid[cell], grid[neighbor]) {
@@ -61,15 +68,15 @@ impl RockPaperScissors {
     // TODO: This is very similar to the analagous function in Conway. Refactor.
     // We can create functions get_moore_neighbors() and get_von_neumann_neighbors()
     // instead of this.
-    pub fn is_beaten(&self, grid: &[usize], x: u32, y: u32) -> bool {
-        let defeats = self.is_beaten_by_neighbor(grid, x, y, 0, -1)
-            + self.is_beaten_by_neighbor(grid, x, y, 0, 1)
-            + self.is_beaten_by_neighbor(grid, x, y, -1, 0)
-            + self.is_beaten_by_neighbor(grid, x, y, 1, 0)
-            + self.is_beaten_by_neighbor(grid, x, y, -1, -1)
-            + self.is_beaten_by_neighbor(grid, x, y, 1, -1)
-            + self.is_beaten_by_neighbor(grid, x, y, -1, 1)
-            + self.is_beaten_by_neighbor(grid, x, y, 1, 1);
+    pub fn is_beaten(&self, grid: &[usize], pos: Vector2D<u32>) -> bool {
+        let defeats = self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 0, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 0, y: 1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: 0 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: 0 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: -1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: -1, y: 1 })
+            + self.is_beaten_by_neighbor(grid, pos, Vector2D { x: 1, y: 1 });
 
         defeats > 2
     }
@@ -80,9 +87,9 @@ impl Automata<()> for RockPaperScissors {
         let mut grid_next = self.grid.clone();
 
         for i in 0..self.grid.len() {
-            let (x, y) = grid_index_to_coords(i, GRID_WIDTH, GRID_HEIGHT);
+            let pos = grid_index_to_coords(i, GRID_WIDTH, GRID_HEIGHT);
 
-            let next_color = if self.is_beaten(&self.grid, x, y) {
+            let next_color = if self.is_beaten(&self.grid, pos) {
                 match self.grid[i] {
                     0 => 1,
                     1 => 2,
@@ -102,10 +109,9 @@ impl Automata<()> for RockPaperScissors {
     fn before_render(&self) {}
 
     fn render(&self, _context: &(), i: usize, pixel: &mut [u8]) {
-        let (vx, vy) = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-        let (x, y) = viewport_to_grid(vx, vy, PIXEL_SCALE);
-
-        let index = grid_coords_to_index(x, y, GRID_WIDTH);
+        let viewport_position = viewport_index_to_coords(i, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        let position = viewport_to_grid(viewport_position, PIXEL_SCALE);
+        let index = grid_coords_to_index(position, GRID_WIDTH);
 
         // Hard-coding to support only 3 colors for now.
         let color = match self.grid[index] {
